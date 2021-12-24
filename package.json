@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "fast-check": "^2.20.0"
+  }
+}
