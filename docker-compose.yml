@@ -1,0 +1,62 @@
+version: '3.2'
+
+services:
+
+  SubstrateTester-doSomething-Success:
+    container_name: SubstrateTester-doSomething-Success
+    image: node:latest
+    network_mode: "host"
+    environment:
+      - ARGS=--test-doSomething-success -a $ENDPOINT
+    volumes:
+      - ./UnitTester:/home/node/app
+    working_dir: /home/node/app
+    command: "npm start"
+
+
+  SubstrateTester-doSomething-Failure:
+    container_name: SubstrateTester-doSomething-Failure
+    image: node:latest
+    network_mode: "host"
+    environment:
+      - ARGS=--test-doSomething-failure -a $ENDPOINT
+    volumes:
+      - ./UnitTester:/home/node/app
+    working_dir: /home/node/app
+    command: "npm start"
+
+
+  SubstrateTester-causeError-Success:
+    container_name: SubstrateTester-causeError-Success
+    image: node:latest
+    network_mode: "host"
+    environment:
+      - ARGS=--test-causeError-success -a $ENDPOINT
+    volumes:
+      - ./UnitTester:/home/node/app
+    working_dir: /home/node/app
+    command: "npm start"
+
+
+  SubstrateTester-causeError-failure:
+    container_name: SubstrateTester-causeError-failure
+    image: node:latest
+    network_mode: "host"
+    environment:
+      - ARGS=--test-causeError-failure -a $ENDPOINT
+    volumes:
+      - ./UnitTester:/home/node/app
+    working_dir: /home/node/app
+    command: "npm start"
+
+
+  SubstrateTester-FastCheck:
+    container_name: SubstrateTester-FastCheck
+    image: node:latest
+    network_mode: "host"
+    environment:
+      - ARGS=--test-fast-check -a $ENDPOINT
+    volumes:
+      - ./UnitTester:/home/node/app
+    working_dir: /home/node/app
+    command: "npm start"

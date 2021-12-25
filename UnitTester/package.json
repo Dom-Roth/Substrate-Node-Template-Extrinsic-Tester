@@ -1,18 +1,21 @@
 {
-  "name": "polkadotjs_testing",
+  "name": "Substrate node template extrinsic tester",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "preinstall": "npm i typescript -g && npm i -g",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node node_modules/ts-node/dist/bin.js --project tsconfig.json src/main.ts $ARGS"
   },
   "keywords": [],
-  "author": "",
+  "author": "Dominik Roth",
   "license": "ISC",
   "dependencies": {
-    "@polkadot/api": "^7.0.2"
-  },
-  "devDependencies": {
-    "ts-node": "^10.4.0"
+    "@polkadot/api": "^7.0.2",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4",
+    "fast-check": "^2.20.0",
+    "minimist": "^1.2.5"
   }
 }
