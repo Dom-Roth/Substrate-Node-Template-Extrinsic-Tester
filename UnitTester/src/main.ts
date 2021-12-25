@@ -18,6 +18,7 @@ Index:
 
 
 function printTestResult(testNum:number, wasTestSuccess:boolean, testDescription:string) {
+    // Used as a callback for the test functions.
     if (wasTestSuccess === true) {
         console.log("\nTest #" + testNum + ": [X] Passed\n" + testDescription + "\n");
     } else {

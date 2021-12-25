@@ -44,16 +44,16 @@ export class Tester {
         result.events.forEach(({event}) => {
             let success;
             if (this.api.events.system.ExtrinsicSuccess.is(event)) {
-                success = intendedFail == true ? false : true;
+                success = intendedFail == false;
                 callback(testNum, success, testDescription);
             } else if (this.api.events.system.ExtrinsicFailed.is(event)) {
-                success = intendedFail == true ? true : false;
+                success = intendedFail == true;
                 callback(testNum, success, testDescription);
             }
         });
     }
 
-    private handleFailure(testNum: number, callback, testDescription: string, intendedFail:boolean=false) {
+    private static handleFailure(testNum: number, callback, testDescription: string, intendedFail:boolean=false) {
         callback(testNum, intendedFail, testDescription);
     }
 
@@ -67,7 +67,7 @@ export class Tester {
         } catch (exc) {
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests doSomething => Valid data, arg: 5";
-            this.handleFailure(1, callback, testDescription);
+            Tester.handleFailure(1, callback, testDescription);
         }
 
         // Tests doSomething with valid data, before considering the bonus task. Arg: 5000
@@ -79,7 +79,7 @@ export class Tester {
         } catch (exc) {
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests doSomething => Valid data before bonus task, arg: 5000";
-            this.handleFailure(2, callback, testDescription);
+            Tester.handleFailure(2, callback, testDescription);
         }
     }
 
@@ -96,7 +96,7 @@ export class Tester {
             // Expected to fail.
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests doSomething => Invalid data: String arg: 'ABCDEF'";
-            this.handleFailure(3, callback, testDescription, true);
+            Tester.handleFailure(3, callback, testDescription, true);
         }
 
         // Tests doSomething with invalid data. Sends long buffer overflow alike string.
@@ -109,7 +109,7 @@ export class Tester {
             // Expected to fail.
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests doSomething => Invalid data: Overflow String.";
-            this.handleFailure(4, callback, testDescription, true);
+            Tester.handleFailure(4, callback, testDescription, true);
         }
 
         // Tests doSomething with invalid data. Arg: -2
@@ -122,7 +122,7 @@ export class Tester {
             // Expected to fail.
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests doSomething => Invalid data, arg: -2.";
-            this.handleFailure(5, callback, testDescription, true);
+            Tester.handleFailure(5, callback, testDescription, true);
         }
 
         // Tests doSomething with invalid data. Sends using an account without funds.
@@ -135,7 +135,7 @@ export class Tester {
             // Expected to fail.
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests doSomething => Invalid data, overflow int arg: 4294967296.";
-            this.handleFailure(6, callback, testDescription, true);
+            Tester.handleFailure(6, callback, testDescription, true);
         }
 
         // Tests doSomething with invalid data. Sends using an account without funds.
@@ -148,7 +148,7 @@ export class Tester {
             // Expected to fail.
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests doSomething => Invalid data, no fee money.";
-            this.handleFailure(7, callback, testDescription, true);
+            Tester.handleFailure(7, callback, testDescription, true);
         }
 
         // Tests doSomething with invalid data. Sends using an account without funds.
@@ -161,7 +161,7 @@ export class Tester {
             // Expected to fail.
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests doSomething => Invalid data, not signed.";
-            this.handleFailure(8, callback, testDescription, true);
+            Tester.handleFailure(8, callback, testDescription, true);
         }
     }
 
@@ -175,7 +175,7 @@ export class Tester {
         } catch (exc) {
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests causeError => Valid data, arg: 5";
-            this.handleFailure(1, callback, testDescription);
+            Tester.handleFailure(1, callback, testDescription);
         }
     }
 
@@ -191,7 +191,7 @@ export class Tester {
         } catch (exc) {
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests causeError => Unset Storage";
-            this.handleFailure(1, callback, testDescription, true);
+            Tester.handleFailure(1, callback, testDescription, true);
         }
 
         // Tests causeError by sending the request unsigned.
@@ -203,7 +203,7 @@ export class Tester {
         } catch (exc) {
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests causeError => Unsigned request";
-            this.handleFailure(3, callback, testDescription, true);
+            Tester.handleFailure(3, callback, testDescription, true);
         }
 
         // Tests causeError with invalid data. First uses doSomething with 4294967295 and then calls causeError to overflow.
@@ -219,7 +219,7 @@ export class Tester {
         } catch (exc) {
             // ToDo: Add boolean switch for debug msgs.
             let testDescription = "Tests causeError => Overflow Storage";
-            this.handleFailure(2, callback, testDescription, true);
+            Tester.handleFailure(2, callback, testDescription, true);
         }
     }
 
@@ -229,13 +229,12 @@ export class Tester {
                 fc.integer({min: 1330, max: 1340}), async (i:number) => {
                     await this.api.tx.templateModule.doSomething(i).signAndSend(this.wallet_bob, {nonce: -1}, (result) => {
                         result.events.forEach(({event}) => {
+                            // Unfortunately doesn't work since the script never receives an answer due to the panic.
                             if (this.api.events.system.ExtrinsicSuccess.is(event)) {
                                 return true;
                             }
                         });
-                        if (result.status.isReady == true || result.status.isInBlock == true)
-                            return true;
-                        return false;
+                        return result.status.isReady == true || result.status.isInBlock == true;
                     });
                 }
             )
